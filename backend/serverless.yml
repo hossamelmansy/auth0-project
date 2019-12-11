@@ -1,0 +1,28 @@
+service: auth0-backend
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+
+functions:
+  hello:
+    handler: src/hello/handler.index
+    events:
+      - http:
+          path: hello
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            identitySource: method.request.header.Authorization
+            type: token
+          request:
+            parameters:
+              headers:
+                Authorization: true
+  authorizer:
+    handler: src/authorizer/handler.index
+    environment:
+      AUTH0_DOMAIN: ## Auth0 Domain here
